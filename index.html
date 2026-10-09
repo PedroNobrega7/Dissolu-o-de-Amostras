@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dissolução de Cápsulas</title>
+    <link rel="icon" href="img/favicon-16x16.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="gelco.css">
+</head>
+
+<body class="theme-claro">
+
+    <div class="bat bat1">🦇</div>
+    <div class="bat bat2">🦇</div>
+    <div class="bat bat3">🦇</div>
+
+    <div class="pumpkin left">🎃</div>
+    <div class="pumpkin right">🎃</div>
+
+    <div class="top-bar">
+        <div class="system-title"><span class="gelco-wordmark">gelco<span>.</span></span><span class="system-label">DISSOLUÇÃO DE CÁPSULAS</span></div>
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="trocarTela('lotes-panel')">Lotes</button>
+            <button class="tab-button" onclick="trocarTela('aneis-panel')">Anéis (Pesagem)</button>
+            <button class="tab-button" onclick="trocarTela('dissolucao-panel')">Dissolução (1H)</button>
+            <button class="tab-button" onclick="trocarTela('analise-panel')">Análise</button>
+
+            <div class="theme-selector">
+                <span style="font-size: 12px;">🎨</span>
+                <select id="select-tema" onchange="alterarTema(this.value)">
+                    <option value="claro" selected>Claro</option>
+                    <option value="escuro">Escuro</option>
+                    <option value="rock">Rock</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+
+        <section class="gelco-intro" aria-labelledby="intro-title">
+            <div class="intro-copy">
+                <span class="eyebrow">LABORATÓRIO · CONTROLE DE AMOSTRAS</span>
+                <h1 id="intro-title">Precisão em cada <span>etapa.</span></h1>
+                <p>Do cadastro do lote à análise de dissolução, suas medições em um só lugar.</p>
+                <div class="intro-tags"><span>01 / Lotes</span><span>02 / Pesagem</span><span>03 / Dissolução</span><span>04 / Análise</span></div>
+            </div>
+            <div class="lab-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="capsule"><span></span></div><i class="spark spark-one"></i><i class="spark spark-two"></i><i class="spark spark-three"></i></div>
+        </section>
+
+        <div id="lotes-panel" class="view-panel active">
+            <div class="panel-title">
+                <h2>1. Gerenciamento de Lotes</h2>
+                <p>Selecione um lote ativo para trabalhar ou cadastre um novo lote</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="input-group full">
+                    <label>Lote Selecionado / Ativo</label>
+                    <select class="select-lote-global" onchange="selecionarLoteAtivo(this.value)"></select>
+                </div>
+
+                <div class="input-group full">
+                    <label>Novo Lote / Amostra</label>
+                    <input type="text" id="lote-nome" placeholder="Digite a identificação do novo lote">
+                </div>
+
+                <div class="input-group">
+                    <label>Data do Filme</label>
+                    <input type="date" id="lote-dataFilme">
+                </div>
+
+                <div class="input-group">
+                    <label>Bloom</label>
+                    <input type="number" id="lote-bloom">
+                </div>
+
+                <div class="input-group">
+                    <label>Viscosidade</label>
+                    <input type="number" id="lote-viscosidade">
+                </div>
+
+                <div class="input-group">
+                    <label>Umidade</label>
+                    <input type="number" id="lote-umidade">
+                </div>
+            </div>
+
+            <div class="action-area">
+                <button class="button button-danger" onclick="excluirLoteAtual()">EXCLUIR LOTE ATIVO</button>
+                <button class="button" onclick="salvarNovoLote()">SALVAR NOVO LOTE</button>
+            </div>
+        </div>
+
+        <div id="aneis-panel" class="view-panel">
+            <div class="panel-title">
+                <h2>2. Cadastro de Anéis (Pesagem & Espessura)</h2>
+                <p>Gerenciamento de medições por lote</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="input-group full">
+                    <label>Lote Ativo</label>
+                    <select class="select-lote-global" onchange="selecionarLoteAtivo(this.value)"></select>
+                </div>
+
+                <div class="input-group">
+                    <label>Nº do Anel</label>
+                    <select id="anel-select-pesagem" onchange="carregarDadosAnelPesagem()"></select>
+                </div>
+
+                <div class="input-group">
+                    <label>Espessura</label>
+                    <input type="number" id="anel-espessura" step="any">
+                </div>
+
+                <div class="input-group">
+                    <label>Peso Final</label>
+                    <input type="number" id="anel-pesoFinal" step="any" oninput="calcularTeoricaEmTempoReal()">
+                </div>
+
+                <div class="input-group">
+                    <label>Teórica (Calculada)</label>
+                    <input type="text" id="anel-teorica" readonly placeholder="Calculado automaticamente...">
+                </div>
+            </div>
+
+            <div class="action-area">
+                <button class="button" onclick="salvarDadosPesagemAnel()">SALVAR PESAGEM DO ANEL</button>
+            </div>
+
+            <div class="rings-summary">
+                <div class="rings-header">
+                    <h3>Status das Pesagens</h3>
+                    <div id="ring-count-pesagem">0 de 60 configurados</div>
+                </div>
+                <div class="rings-list" id="rings-list-pesagem"></div>
+            </div>
+        </div>
+
+        <div id="dissolucao-panel" class="view-panel">
+            <div class="panel-title">
+                <h2>3. Coleta de Dissolução de hora em hora (1H)</h2>
+                <p>Coleta e análise de absorbância por lote</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="input-group full">
+                    <label>Lote Ativo</label>
+                    <select class="select-lote-global" onchange="selecionarLoteAtivo(this.value)"></select>
+                </div>
+
+                <div class="input-group">
+                    <label>Nº do Anel</label>
+                    <select id="anel-select-dissolucao" onchange="carregarDadosAnelDissolucao()"></select>
+                </div>
+
+                <div class="input-group">
+                    <label>Aplicar Absorção Geral (%)</label>
+                    <select id="aplicarAbsorcaoGeral" onchange="atualizarCalculosDissolucao()">
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="dissolution-table-container">
+                <table class="dissolution-table">
+                    <thead>
+                        <tr>
+                            <th>Ponto</th>
+                            <th>Tempo (min)</th>
+                            <th>Absorbância (Ab)</th>
+                            <th id="th-resultado">Concentração</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dissolution-tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="action-area">
+                <button class="button" id="btn-salvar-dissolucao" onclick="salvarDissolucaoAnel()">SALVAR DISSOLUÇÃO</button>
+                <button class="button button-danger" id="btn-finalizar-anel" onclick="finalizarAnel()">FINALIZAR ANEL</button>
+            </div>
+
+            <div class="rings-summary">
+                <div class="rings-header">
+                    <h3>Status da Dissolução</h3>
+                    <div id="ring-count-dissolucao">0 de 60 finalizados</div>
+                </div>
+                <div class="rings-list" id="rings-list-dissolucao"></div>
+            </div>
+        </div>
+
+        <div id="analise-panel" class="view-panel">
+            <div class="panel-title">
+                <h2>4. Painel de Análise</h2>
+                <p>Visualização de resultados acumulados e dados consolidados</p>
+            </div>
+
+            <div class="placeholder-box">
+                <h3 style="color: var(--text-title); margin-bottom: 10px;">📊 Módulo de Análise em Construção</h3>
+                <p>Esta área está pronta para receber gráficos de dissipação, curvas de dissolução e relatórios comparativos dos lotes.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
