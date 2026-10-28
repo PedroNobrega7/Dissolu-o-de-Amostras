@@ -1,0 +1,53 @@
+/* Camada decorativa de solvatação: água envolve e dispersa o soluto. */
+body.theme-claro {
+  --bg-gradient: radial-gradient(ellipse at 15% 20%, #d6f5fb 0, transparent 55%), radial-gradient(ellipse at 90% 80%, #e5e7fa 0, transparent 50%), #f3f9fc;
+  --water-oxygen: #168cba; --water-hydrogen: #80cddd; --water-bond: #409db9;
+  --solute: #c34380; --molecule-opacity: .38;
+}
+body.theme-escuro {
+  --bg-gradient: radial-gradient(ellipse at 10% 15%, #102d46 0, transparent 60%), radial-gradient(ellipse at 90% 90%, #191c3d 0, transparent 55%), #080f1c;
+  --water-oxygen: #40c9e9; --water-hydrogen: #a2e6ef; --water-bond: #388ca9;
+  --solute: #eb70a5; --molecule-opacity: .36;
+}
+.molecular-background { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; contain: strict; }
+.molecular-background svg { width: 100%; height: 100%; opacity: var(--molecule-opacity); }
+body.theme-rock .molecular-background { display: none; }
+.molecular-background .oxygen { fill: var(--water-oxygen); }
+.molecular-background .hydrogen { fill: var(--water-hydrogen); }
+.molecular-background .bond { stroke: var(--water-bond); stroke-width: 2; stroke-linecap: round; }
+.molecular-background .solute { fill: var(--solute); }
+.molecular-background .hydration { fill: none; stroke: var(--water-bond); stroke-width: .7; stroke-dasharray: 3 9; opacity: .3; }
+.molecular-background .current { animation: aqueous-drift 23s ease-in-out infinite alternate; animation-delay: var(--delay); }
+.molecular-background .release { animation: solute-release 18s ease-in-out infinite; animation-delay: var(--delay); }
+.molecular-background .water-shell { animation: hydration-shell 18s ease-in-out infinite; animation-delay: var(--delay); }
+.main-container { width: 1480px; max-width: calc(100% - 96px); padding-top: 28px; padding-bottom: 36px; }
+.view-panel { min-height: calc(100vh - 190px); }
+body.theme-claro .view-panel { background: rgba(255, 255, 255, .92); }
+body.theme-escuro .view-panel { background: rgba(15, 24, 40, .94); }
+.molecular-background::before, .molecular-background::after { content: ''; position: absolute; width: 65vw; height: 65vw; border-radius: 50%; background: radial-gradient(ellipse, #00bcd422, transparent 65%); animation: liquid-light 26s ease-in-out infinite alternate; }
+.molecular-background::before { top: -25%; left: -30%; }
+.molecular-background::after { right: -30%; bottom: -40%; background: radial-gradient(ellipse, #8b6bce20, transparent 65%); animation-delay: -13s; }
+.molecular-background .flow-line { fill: none; stroke: var(--water-bond); stroke-width: 1; opacity: .22; stroke-dasharray: 4 14; animation: flowing-bonds 38s linear infinite; }
+.molecular-background .bubble { fill: none; stroke: var(--water-oxygen); stroke-width: 1; opacity: .3; animation: bubble-rise var(--duration) linear infinite; animation-delay: var(--delay); }
+.molecular-background .glint { fill: var(--water-hydrogen); animation: glimmer 7s ease-in-out infinite; animation-delay: var(--delay); }
+.molecular-background .ripple { fill: none; stroke: var(--water-oxygen); stroke-width: 1; animation: solvent-ripple 12s ease-out infinite; animation-delay: var(--delay); }
+@keyframes liquid-light { to { transform: translate(12vw, 8vh) scale(1.2); } }
+@keyframes flowing-bonds { to { stroke-dashoffset: -360; } }
+@keyframes bubble-rise { from { transform: translateY(80px); opacity: 0; } 15%, 75% { opacity: .35; } to { transform: translateY(-240px); opacity: 0; } }
+@keyframes glimmer { 0%, 100% { opacity: .15; } 50% { opacity: .85; } }
+@keyframes solvent-ripple { from { transform: scale(.3); opacity: .45; } to { transform: scale(2.6); opacity: 0; } }
+@media (max-width: 800px) { .main-container { max-width: calc(100% - 32px); padding-top: 20px; } .view-panel { min-height: calc(100svh - 210px); } }
+@keyframes aqueous-drift { from { transform: translate(-12px, 12px) rotate(-5deg); } to { transform: translate(22px, -24px) rotate(7deg); } }
+@keyframes solute-release {
+  0%, 15% { transform: translate(0, 0); }
+  65%, 82% { transform: translate(var(--dx), var(--dy)); opacity: 1; }
+  94% { transform: translate(var(--dx), var(--dy)); opacity: 0; }
+  95% { transform: translate(0, 0); opacity: 0; }
+  100% { transform: translate(0, 0); opacity: 1; }
+}
+@keyframes hydration-shell { 0%, 8% { opacity: .12; transform: scale(1.45); } 30%, 85% { opacity: 1; transform: scale(1); } 94%, 100% { opacity: .12; transform: scale(1.45); } }
+@media (max-width: 600px) { .molecular-background svg { width: 170%; margin-left: -35%; } }
+@media (prefers-reduced-motion: reduce) {
+  .molecular-background *, .molecular-background::before, .molecular-background::after { animation: none !important; }
+  .molecular-background .release { transform: translate(var(--dx), var(--dy)); }
+}
